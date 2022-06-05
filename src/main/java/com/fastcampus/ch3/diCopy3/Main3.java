@@ -11,8 +11,7 @@ import java.util.Set;
 @Component class Car {}
 @Component class SportsCar extends Car{}
 @Component class Truck extends Car{}
-//@Component
-class Engine {}
+@Component class Engine {}
 
 class Appcontext {
     Map map; //객체 저장소
@@ -45,15 +44,25 @@ class Appcontext {
         }
     }
 
-    Object getBean(String key) {
+    Object getBean(String key) { // 객체를 검색할때 byName으로 검색하는것
         return map.get(key);
+    }
+
+    Object getBean(Class clazz) { // 객체를 검색할때 byType으로 검색하는것
+        for(Object obj : map.values()) {
+            if(clazz.isInstance(obj)) {
+                return obj;
+            }
+        }
+        return null;
     }
 }
 
 public class Main3 {
     public static void main(String[] args) throws Exception {
         Appcontext ac = new Appcontext();
-        Car car = (Car)ac.getBean("car");
+        Car car = (Car)ac.getBean("car"); // 객체를 검색할때 byName으로 검색하는것
+        Car car2 = (Car)ac.getBean(Car.class); // 객체를 검색할때 byType으로 검색하는것
         Engine engine = (Engine)ac.getBean("engine");
         System.out.println("car = " + car);
         System.out.println("engine = " + engine);
