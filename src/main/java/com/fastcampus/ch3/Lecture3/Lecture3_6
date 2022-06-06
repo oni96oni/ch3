@@ -1,0 +1,17 @@
+Spring DI 활용하기 - 이론(2)
+    5.ApplicationContext의 주요 메서드
+        getBean() : 빈 가져오기, @Autowired쓰면 getBean도 안쓴다
+        isPrototype(), isSingleton() : 빈이 프로토타입인가 싱글톤인가
+        isTypeMatch() : 타입확인
+        getBeanDefinitionCount() : 정의된 빈의 갯수
+        getBeanDefinitionNames() : 정의된 빈의 이름
+
+    태그를 옮기면서 어떤 빈들이 추가되고 줄어드는지 알 수 있다.
+
+    servletAC가 있으면 getParent메서드로 rootAC를 구할 수 있다.
+
+    system properties 설정값을 줄때 -D를 사용해서 Key값을 주고 Value값을 주면
+
+    한글깨질때 구성편집 - vm편집 -Duser.language=en 입력
+
+    Root 웹 초기화 - ?_? 무슨흐름이야 대체
