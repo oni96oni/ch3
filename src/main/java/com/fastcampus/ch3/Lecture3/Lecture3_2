@@ -1,4 +1,4 @@
-Spring DI 흉내내기
+Spring DI 흉내내기(2)
     2.객체 컨테이너(ApplicationContext) 만들기
 
         Map으로 객체 저장소를 만들어서 값을 객체로 넣어줄것!

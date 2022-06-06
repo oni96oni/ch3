@@ -1,4 +1,4 @@
-Spring DI 흉내내기
+Spring DI 흉내내기(1)
     1.변경에 유리한 코드(1) - 다형성, factory method
 
     예시)
