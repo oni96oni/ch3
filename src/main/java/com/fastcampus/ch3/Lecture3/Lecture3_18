@@ -1,3 +1,58 @@
 AOP의 개념과 용어
     1.공통 코드의 분리
         여러 메서드에 공통 코드를 추가해야 한다면?
+        DI와 함께 스프링의 핵심개념중 하나인 AOP
+
+        핵심기능과 부가기능 두개의 관심사를 분리한다!
+
+        reflection API를 이용해서 분리된 클래스를 불러온다.
+
+        정규식을 이용해 패턴에 일치하는 메서드만 aop할 수 있다! 패턴 대신에 애너테이션을 사용 가능 @Transactional
+
+        별도의 클래스에 중복되는 메서드를 추가하여 호출
+
+    2.코드를 자동으로 추가한다면, 어디에?
+        ★중간에는 추가할 수 없다! 메소드 마다 라인수가 다 다르고 계속 바뀌기 때문에
+        맨앞과 맨끝은 정해져 있으니까 자동으로 추가 가능하다.
+        양쪽에 다 넣는것을 AroundAdvice! 앞에만은 BeforeAdvice 뒤에만넣으면 AfterAdvice !
+
+    3.AOP(Aspect Oriented Programming)란?
+        관점 지향 프로그래밍? 횡단 관심사? cross-cutting concerns?
+        ★부가 기능을(advice)을 동적으로 추가해주는 기술 (부가 기능 <-> 핵심 기능)
+            결국 코드를 추가하는것, 동적의 의미는 코드가 실행되는 과정에서 자동적으로 추가되는것을 의미
+
+        ★메서드의 시작 또는 끝에 자동으로 코드(advice)를 추가
+
+        모듈이 달라도 Logging, Transaction, Security들은 공통적으로 쓰인다. 이것을 횡단 관심사라고 한다.
+
+    4.AOP 관련 용어
+        target - advice가 추가될 객체
+        advice - target에 동적으로 추가될 부가 기능(코드)
+            !실행중에! advice와 target이 따로 생성된 다음에 이 두개가 하나로 합쳐진다 advice가 target 맨앞, 맨뒤로! 이렇게 합쳐진 객체를 Proxy라고 한다.
+        join point - advice가 추가(join)될 대상(메서드)
+        pointcut - join point들을 정의한 패턴. 예)execution(* com.fastcampus.*.*(..))
+            패턴:내가 원하는 메서드들만 골라서 부가기능을 추가하고 싶을때! 쓰는것이 패턴
+        proxy - targhet에 advice가 동적으로 추가되어 생성된 객체
+        weaving - target에 advice를 추가해서 proxy를 생성하는 것
+            합치는 것을 weaving이라고 한다 target에다가 advice를 넣는것
+
+        OOP, AOP의 공통 목적은 변경에 유리한 코드를 만들기 위해서 분리하는것!
+
+    5.Advice의 종류
+        Advice의 설정은 XML과 애너테이션, 두가지 방법으로 가능
+
+            XML             애너테이션
+            around advice   @Around         메서드의 시작과 끝부분에 추가되는 부가 기능
+            before advice   @Before         메서드의 시작 부분에 추가되는 부가 기능
+            after advice    @After          메서드의 끝 부분에 추가되는 부가 기능
+            after returning @AfterReturning 예외가 발생하지 않았을 때, 실행되는 부가 기능
+            after throwing  @AfterThrowing  예외가 발생했을 때, 실행되는 부가 기능
+
+    6.pointcut expression
+        advice가 추가될 메서드를 지정하기 위한 패턴!
+            execution(접근제어자 생략가능!)(반환타입 패키지명. 클래스명.메서드명(매개변수 목록))
+            반환 타입이 있는경우에는 Object 없으면 모든 메서드를 호출할 수 있어야 하기 떄문에, void도 가능은 하다.
+            advice가 여러개 제공될 수 있기때문에
+
+            advice가 여러개면 @Order란 애너테이션 붙여서 어떤 순서로 제공될것인지 알 수 있다.
+
