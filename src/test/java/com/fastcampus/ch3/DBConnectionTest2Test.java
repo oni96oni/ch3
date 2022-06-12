@@ -10,6 +10,7 @@ import javax.sql.DataSource;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 
 import static org.junit.Assert.assertTrue;
@@ -19,6 +20,7 @@ import static org.junit.Assert.assertTrue;
 public class DBConnectionTest2Test {
     @Autowired
     DataSource ds;
+    final int FAIL = 0;
 
     @Test
     public void insertUserTest() throws  Exception {
@@ -59,7 +61,34 @@ public class DBConnectionTest2Test {
 
     // 매개변수로 받은 사용자 정보로 user_info테이블을 update하는 메서드
     public int updateUser(User user) throws Exception {
-        return 0;
+        int rowCnt = FAIL; // insert, delete, update
+
+//        Connection conn = null;
+//        PreparedStatement pstnt = null;
+
+        String sql = "update user_info " +
+                "set pwd = ?, name=?, email=?, birth=?, sns=?, reg_date=?, " +
+                "where id = ? ";
+
+        // try-with-resources
+        try(
+                Connection conn = ds.getConnection();
+                PreparedStatement pstnt = conn.prepareStatement(sql); // SQL Injection공격, 성능향상!
+                ){
+            pstnt.setString(1, user.getPwd());
+            pstnt.setString(2, user.getName());
+            pstnt.setString(3, user.getEmail());
+            pstnt.setDate(4, new java.sql.Date(user.getBirth().getTime()));
+            pstnt.setString(5, user.getSns());
+            pstnt.setTimestamp(6, new java.sql.Timestamp(user.getReg_date().getTime()));
+            pstnt.setString(7, user.getId());
+
+            rowCnt = pstnt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return FAIL;
+        }
+        return rowCnt;
     }
 
     public int deleteUser(String id) throws Exception {
