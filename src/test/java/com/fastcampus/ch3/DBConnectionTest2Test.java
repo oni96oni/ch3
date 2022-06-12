@@ -135,6 +135,40 @@ public class DBConnectionTest2Test {
         pstmt.executeUpdate(); //  insert, delete, update
     }
 
+    @Test
+    public void transactionTest() throws Exception {
+        Connection conn = null;
+        try {
+            deleteAll();
+            conn = ds.getConnection();
+            conn.setAutoCommit(true); // conn.setAutoCommit(true) 오토커밋을 수동커밋으로 변경하자!
+
+            String sql = "insert into user_info values (?, ?, ?, ?,?,?, now()) ";
+
+            PreparedStatement pstmt = conn.prepareStatement(sql); // SQL Injection공격, 성능향상
+            pstmt.setString(1, "asdf");
+            pstmt.setString(2, "1234");
+            pstmt.setString(3, "abc");
+            pstmt.setString(4, "aaa@aaa.com");
+            pstmt.setDate(5, new java.sql.Date(new Date().getTime()));
+            pstmt.setString(6, "fb");
+
+            int rowCnt = pstmt.executeUpdate();
+
+            pstmt.setString(1,"asdf");
+
+            rowCnt = pstmt.executeUpdate();
+
+            conn.commit();
+
+        } catch (Exception e) {
+            conn.rollback(); //작업에 실패하면 롤백! 저위에 작업 두가지 모두 성공해야지 롤백안한다.
+            e.printStackTrace();
+        } finally {
+
+        }
+    }
+
     // 사용자 정보를 user_info테이블에 저장하는 메서드
     public int insertUser(User user) throws Exception {
         Connection conn = ds.getConnection();
