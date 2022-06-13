@@ -1,0 +1,41 @@
+서비스 계층의 분리와 @Transactional
+    1.서비스 계층(Layer)의 분리 - 비지니스 로직의 분리
+        분리되는 이유가 다른코드 - 관심사의 분리
+
+        비즈니스로직이 바뀌었는데 컨트롤러가 바뀐다? 컨트롤러는 비즈니스로직담당이 아니어서 새로운 객체를 만들자
+
+        Presentation layer, Business logic(서비스 계층), Persistence(영속계층) Layer 이렇게 3가지로 나누는게 보통!
+
+        서비스계층의 메서드들의 이름은 업무용어스럽다. 영속계층의 메서드들은 sql적
+
+        tx을 적용하기에는 서비스 계층이 적합하다!
+            둘중 하나라도 실패하면 회원가입같은것은 실패하게끔 해야하기 때문에! (ex: insertUser + insertUserHistory)
+
+        @Controller, @Service, @Repository 등의 애너테이션들은 @Component를 포함하고 있기 때문에 component-scan으로 자동스캔이 다 된다
+
+    2.TransactionManager란?
+        DAO의 각 메서드는 개별 Connection을 사용
+        메서드들 마다 하나씩 따로 커넥션을 만들어서 처리를 하는것 하지만 tx은 1개의 커넥션에서 이루어져야해!
+        그래서 개별 커넥션을 한개의 커넥션을 쓰게 유도를 해줘야한다.
+
+        같은 트랜젝션에 있는 명령들은 같은 트랜젝션에서 쓰게 하는것이 트랜젝션매니저
+
+        같은 tx내에서 같은 Connection을 사용할 수 있게 관리!
+
+        DAO에서 Connection을 얻거나 반환할때 DataSourceUtils를 사용해야한다.
+
+    3.TransactionManager로 Transaction 적용하기
+        txManager생성
+        디폴트txdefinition을 (tx의 속성을 정의)이용해서 트렌젝션을 얻어온다(getTransaction)
+        두개의 작업 모두 성공해야 커밋! 실패하면, 에러가 발생하면 catch블럭에서 롤백한다.
+
+    4.@Transactional로 Transaction적용하기
+        AOP를 이용한 핵심 기능과 부가 기능의 분리!
+            AOP는 자동 코드 추가! (Before, After, Around)
+        핵심기능만 가진 메서드 분리 후 부가기능을 덧붙이는 클래스로 감싸준다.
+
+        @Transactional은 클래스나 인터페이스에도 붙일 수 있음
+            클래스내의 모든 메서드들에게 적용
+            인터페이스를 구현하는 클래스에 있는 모든 메서드들에게 적용
+
+
