@@ -1,0 +1,28 @@
+서비스 계층의 분리와 @Transactional(2)
+    Transactional은 RuntimeException일때만 실행!
+    5.@Transactional의 속성
+        propagation     Tx의 경계(boundary)를 설정하는 방법을 지정
+        isolation       Tx의 isolation level을 지정. DEFAULT, READ_UNCOMMITTED, READ_COMMITTED, REPEATABLE_READ, SERIALIZABLE
+        readOnly        Tx가 데이터를 읽기만 하는 경우, true로 지정하면 성능이 향상!
+        rollbackFor     지정된 예외가 발생하면, Tx을 rollback, RuntimeException과 Error는 자동 rollback
+        noRollbackFor   지정된 예외가 발생해도, Tx을 rollback하지 않음
+        timeout         지정된 시간(초) 내에 tx가 종료되지 않으면 tx를 강제 종료
+
+    6.propagation 속성의 값
+        REQUIRED        ★Tx이 진행중이면 참여하고, 없으면 새로운 Tx 시작 (디폴트)
+        REQUIRES_NEW    ★Tx이 진행중이건 아니건, 새로 Tx 시작
+            Tx안에 다른 Tx를 만드는것 - 완전히 다른 Tx
+        NESTED          Tx이 진행중이면, Tx의 내부 Tx로 실행
+            Tx안에 서브Tx를 만드는것 - 결국 같은 Tx, savepoint라는것이 있다. tx작업이 엄청나게 큰 경우 작업중간에 savepoint를 둘 수 있다.
+            그래서 예외가 발생하면 Tx의 시작점으로 가야하지만 savepoint를 두면 그 지점으로 갈 수 있다. 여러 개 둘 수 있음
+        MANDATORY       반드시 진행중인 Tx 내에서만 실행가능. 아니면 예외 발생
+        SUPPORTS        Tx이 진행중이건 아니건 상관없이 실행
+        NOT_SUPPORTED   Tx 없이 처리. Tx이 진행중이면 잠시 중단(suspend)
+        NEVER           Tx 없이 처리. Tx이 진행중이면 예외 발생
+
+    7.REQUIRED와 REQUIRES_NEW (1) - REQUIRED
+        Tx가 기존에 있으면 새로 tx를 만들지 않고 참가한다!
+
+    8.REQUIRED와 REQUIRES_NEW (2) - REQUIRED_NEW
+        새로운 Tx가 필요하다는 뜻!
+        Tx가 추가된다. 별도의 tx여서 기존의 tx의 작업 성공 여부와 별도로 진행된다.
