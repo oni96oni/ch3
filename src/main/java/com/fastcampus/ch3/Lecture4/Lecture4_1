@@ -1,0 +1,19 @@
+MyBatis의 소개와 설정
+    1.MyBatis란?
+        SQL Mapping Framework - Easy & Simple
+            자바코드 SQL을 Mapping 해준다는 뜻!
+            SQL을 별도의 XML로 분리, 분리해놓고 자바코드에서 간단하게 사용할 수 있게 끔 만들었다.
+
+            JPA어려운 이유 1. OOP 2. SQL & DB Modeling, SpringBoot와 세트
+
+        자바 코드로부터 SQL문을 분리해서 관리
+
+        매개변수 설정과 쿼리 결과를 읽어오는 코드를 제거
+            자바코드에서는 sql을 설정하려고 매개변수같은 설정들 (ex : setString, getString ) 을 제거해서
+
+        작성할 코드가 줄어서 생산성 향상 & 유지 보수 편리
+
+        자바코드와 sql문이 섞여있는것을 분리!
+            xml문서에다가 sql만 따로 떼어낸다. 그러면 자바코드도 간단해진다.
+
+
