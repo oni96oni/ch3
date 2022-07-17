@@ -46,10 +46,10 @@ class Appcontext {
 
     Object getBean(String key) { // 객체를 검색할때 byName으로 검색하는것
         return map.get(key);
-    }
+    } // 객체를 검색할때 byName으로 검색하는것
 
     Object getBean(Class clazz) { // 객체를 검색할때 byType으로 검색하는것
-        for(Object obj : map.values()) {
+        for(Object obj : map.values()) { // 반복문을 이용해서 map에 있는 values(타입)들을 갖고온다.
             if(clazz.isInstance(obj)) {
                 return obj;
             }

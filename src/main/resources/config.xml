@@ -4,7 +4,37 @@
        xmlns:context="http://www.springframework.org/schema/context"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
         <context:component-scan base-package="com.fastcampus.ch3">
-                <context:exclude-filter type="regex" expression="com.fastcampus.ch3.diCopy*.*"/>
+                <context:exclude-filter type="regex" expression="com.fastcampus.ch3.diCopy*.*"/> <!--bean 충돌이 일어난다 왜? Car 클래스는 diCopy3에도 있어서! 그럴때는 구분할 수 있게 이렇게 해준다. -->
         </context:component-scan>
         <context:annotation-config/>
+
+        <!--
+        <bean id="car" class="com.fastcampus.ch3.Car" scope="singleton"/> 이렇게 원래는 singleton 이다!
+                1.setter를 이용한 초기화 방법
+                <property name="color" value="red"/>
+                <property name="oil" value="100"/> 여기서 int여도 " 따옴표를 사용해서 값을 줘야한다. 자동변환 해주니까 걱정 안해도 된다.
+                <property name="engine" ref="engine"/> 기본형이나 String만 value! 나머지는 ref로 참조해서 줘야한다.
+                <property name="doors">
+                        <array value-type="com.fastcampus.ch3.Door"> 배열일 때는 이렇게 사용
+                                <ref bean="door1"/>
+                                <ref bean="door2"/>
+                        </array>
+                </property>
+                위와 같이 setter 설정 대신에 xml에 기본값을 설정해 줄 수 있다.
+                그리고 수정할일이 생겨도 코드를 수정하지 않고 xml파일만 수정해도 되니 좋다. 혹은 이렇게도 가능하다
+                2.생성자를 이용한 초기화 방법
+                <constructor-arg name="color" value="red"/>
+                <constructor-arg name="oil" value="100"/>
+                <constructor-arg name="engine" ref="engine"/>
+                <constructor-arg name="doors">
+                        <array value-type="com.fastcampus.ch3.Door">
+                                <ref bean="door1"/>
+                                <ref bean="door2"/>
+                        </array>
+                </constructor-arg>
+                // 이렇게 하면 생성자에서 값을 설정하지 않아도 생성된다.
+        <bean id="engine" class="com.fastcampus.ch3.Engine" scope="prototype"/>
+        <bean id="door" class="com.fastcampus.ch3.Door" scope="prototype"/>
+        -->
+
 </beans>

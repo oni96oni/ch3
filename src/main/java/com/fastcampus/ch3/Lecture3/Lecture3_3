@@ -1,16 +1,69 @@
 Spring DI 흉내내기(3)
-    4.객체 찾기 - by Name, by Type
+    4.객체 찾기(수동) - by Name, by Type
+        지금까지는 car라는 이름(id)을 지정해주어서 찾았는데
         객체를 찾을때 이름으로 찾는것 뿐만 아니라 타입으로 찾는것 또한 있다!
         Map 데이터구조에서 Key로 찾는게 이름으로 찾는것!
         Value로 찾는게 타입으로 찾는것!
 
+        AppContext ac = new AppContext();
+        Car car = (Car)ac.getBean("car"); // 이름(id)으로 찾기
+        Car car2 = (Car)ac.getBean(Car.class); // 타입으로 찾기
+
+        Object getBean(String id) { // 이름으로 찾기
+            return map.get(id);
+        }
+
+        Object getBean(Class clazz) { // 타입으로 찾기
+            for(Object obj : map.values()) {
+                if(clazz.isInstance(o)) { // 타입이 같은지 확인 obj instanceof clazz
+                    return obj;
+                }
+            }
+            return null;
+        }
+
     5.객체를 자동 연결 하기(1) - @Autowired (By type)
         AppContext는 객체 저장소
         수동으로 객체참조를 해줄 수 있지만 @Autowired 애너테이션을 이용하면 자동연결을 할 수 있다.
+
+        수동객체 참조 연결코드 예시)
+        AppContext ac = new AppContext();
+        Car car = (Car)ac.getBean("car");
+        Engine engine = (Engine)ac.getBean("engine");
+        Door door = (Door)ac.getBean("door");
+
+        car.engine = engine; // 수동으로 객체 참조 연결, 이 연결을 자동으로 하게 해주는 방법이 @Autowired 애노테이션과 @Resource 애너테이션이다.
+        car.dor = door; // map에 저장되있는 객체들(value) 중에 찾아서 자동으로 연결해준다.
+
+        class Car {
+            Engine engine;
+            Door door;
+        }
+
         map을 찾아서 (Type으로) value를 찾는다 그다음에 애너테이션에 붙은 타입과 일치하는것을 참조변수에다가 대입해준다.
-        value를 instanceof로 value를 찾아서 확인해서 대입해주는것
+        value를 instanceof로 value를 찾아서 확인해서 참조변수에 저장해주는것
 
     6.객체를 자동 연결 하기(2) - @Resource (By name)
+        코드 예시)
+        AppContext ac = new AppContext();
+        Car car = (Car)ac.getBean("car");
+        Engine engine = (Engine)ac.getBean("engine");
+        Door door = (Door)ac.getBean("door");
+
+        car.engine = engine;
+        car.dor = door;
+
+        class Car {
+            @Resource(name="engine")
+            Engine engine;
+            @Resource // 이렇게 이름이 생략될 수 있다. 여기서는 (name="door")이 생략된것.
+            Door door;
+        }
+
         @Resource는 해당 Key로 찾아서 value를 대입해주는것
-        생략하면, 첫글자 소문자로 바꾼것이 이름으로 사용된다. 혹은 이름을 직접 지정해 줄 수도 있다.
+        이름 지정은 어떻게 해주는데??
+        생략하면, 타입의 첫글자를 소문자로 바꾼것이 이름으로 사용된다. 혹은 이름을 직접 지정해 줄 수도 있다.
         타입으로 검색했을때 구분이 안되는 경우가 있다. 같은타입인경우 그럴때는 이름으로 찾아야하니까 @Resource를 사용
+
+        @Autowired와 @Resource는 서로 참조하는 객체를 연결하는 코드이다.
+        그리고 연결을 처리해주는 메서드가 필요하다.

@@ -41,7 +41,7 @@ class Appcontext {
     }
 
     private void doResource() {
-        // ★map에 저장된 객체의 iv 중에 @Resource가 붙어 있으면 map에서 iv의 타입에 맞는 객체를 찾아서 연결(객체의 주소를 iv에 저장하는것)
+        // ★map에 저장된 객체의 iv 중에 @Resource가 붙어 있으면 map에서 iv의 이름에 맞는 객체를 찾아서 연결(객체의 주소를 iv에 저장하는것)
         try {
             for(Object bean : map.values()) {
                 for(Field fid : bean.getClass().getDeclaredFields()) {
@@ -51,22 +51,23 @@ class Appcontext {
                 }
             }
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
-
+    //코파일럿은 어떤 객체를 어떤 객체에 연결하는지 알려주는 코드를 작성한다.
+    //@Autowired 어노테이션이 붙은 필드는 자동으로 연결된다.
     private void doAutowired() {
         // ★map에 저장된 객체의 iv 중에 @Autowired가 붙어 있으면 map에서 iv의 타입에 맞는 객체를 찾아서 연결(객체의 주소를 iv에 저장하는것)
         try {
             for(Object bean : map.values()) {
-                for(Field fid : bean.getClass().getDeclaredFields()) {
-                    if(fid.getAnnotation(Autowired.class)!=null) { // byType
-                        fid.set(bean, getBean(fid.getType())); // car.engine = obj;
+                for(Field fid : bean.getClass().getDeclaredFields()) { // getDeclaredFields() : 자식 클래스에서도 상속받은 필드를 가져옴
+                    if(fid.getAnnotation(Autowired.class)!=null) { // byType @Autowired가 붙어있는 태그가 있으면 다음코드 실행
+                        fid.set(bean, getBean(fid.getType())); // car.engine = obj; 필드의 값을 바꾸어준다.
                     }
                 }
             }
         } catch (IllegalAccessException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -89,7 +90,7 @@ class Appcontext {
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 
@@ -114,7 +115,7 @@ public class Main4 {
         Engine engine = (Engine)ac.getBean("engine");
         Door door = (Door) ac.getBean(Door.class); // 객체를 검색할때 byType으로 검색하는것
 
-        // 수동으로 객체를 연결 애너테이션을 사용(스프링)함으로써 관리해야할 코드를 줄일 수 있다.
+        // 수동으로 객체를 연결 애너테이션을 사용(스프링)함으로써 관리해야할 코드를 줄일 수 있다. 아래가 수동대입하는 코드
 //        car.engine = engine;
 //        car.door = door;
 
