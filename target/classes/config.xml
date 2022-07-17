@@ -7,4 +7,9 @@
                 <context:exclude-filter type="regex" expression="com.fastcampus.ch3.diCopy*.*"/>
         </context:component-scan>
         <context:annotation-config/>
+
+
+        <bean id="car" class="com.fastcampus.ch3.Car" scope="singleton"/> 이렇게 원래는 singleton 이다!
+        <bean id="engine" class="com.fastcampus.ch3.Engine" scope="prototype"/>
+        <bean id="door" class="com.fastcampus.ch3.Door" scope="prototype"/>
 </beans>
