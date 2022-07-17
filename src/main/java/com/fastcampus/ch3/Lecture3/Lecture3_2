@@ -1,19 +1,64 @@
 Spring DI 흉내내기(2)
     2.객체 컨테이너(ApplicationContext) 만들기
+        예시)
+        AppContext ac = new AppContext(); 사용할때 생성하면 자동으로 초기화되면서 객체가 만들어지게끔. 사용할때는 getBean("key")를 사용하여 객체를 얻어올 수 있다.
+        Car car = (Car)ac.getBean("car");
+        Engine engine = (Engine)ac.getBean("engine");
+
+        class AppContext {
+            Map map; <- 객체 저장소(map에 다가 객체를 저장할거야)
+
+            AppContext() {
+                map = new HashMap();
+                map.put("car", new SportsCar()); 하지만! 이부분은 하드코딩으로써 변경사항이 생기면 변경해주어야 한다. 어떻게 해볼까?
+                map.put("engine", new Engine()); 저번시간에는 properties를 이용해서 밖으로 빼내었다(파일-config.txt)
+            }
+
+            Object getBean(String id) {return map.get(id);}
+        }
+
+        변하는 부분 13~14줄 코드를 저번시간처럼 밖으로 빼내서 변경해보자
+        예시
+        Properties p = new Properties();
+        p.load(new FileReader("config.txt"));
+        map = new HashMap(p); properties 대신에 map을 사용한 이유는 < String, Object > 타입이기 때문이다.
+
+        for(Object key : map.keySet()) {
+            Class clazz = Class.forName((String)map.get(key)); 클래스 이름을 얻어온 다음에
+            map.put(key, clazz.newInstance()); 그것을 가지고 객체를 생성한 뒤에 그걸 다시 map에 집어넣는것!
+        }
 
         Map으로 객체 저장소를 만들어서 값을 객체로 넣어줄것!
 
         object를 값으로 넣기 위해서는 Properties를 map으로 변환해줘야해
 
-        Bean은 자바빈에서 왔다. 자바 객체를 의미.
+        Bean은 자바빈에서 왔다. 자바 ★객체를 의미. 커피콩, 자바로고가 커피
+        스프링에서는 Object 대신 Bean을 많이 쓰더라
 
-    3.자동 객체 등록 하기 - Component Scanning
-        기존의 config.txt파일을 불러다가 저장하는 방법도있지만
-        클래스에다가 @Component를 붙이면 자동으로 등록할 수 있다.
+    3.자동 객체 등록 하기 - Component Scanning - @Component
+        지금은 config.txt에다가 자바객체 빈을 등록을 해놓고 읽어서 사용을 하지만 Component Scanning이라는 기술이 있다.
+        기존의 config.txt파일을 불러다가 저장하는 방법도있지만 클래스에다가 @Component를 붙이면 자동으로 등록할 수 있다.
         패키지 안에 모든 클래스를 읽어서 그중에 @Component 붙은게 있으면 객체 생성해서 map에 저장
         SimpleName은 패키지이름 뺀거
         외부 파일을 이용하면 새로운 객체를 등록할때마다 파일을 고쳐야하는데 여러명이서 개발할때는 하나의 파일을 편집하는것이 쉽지가 않다.
         그래서 config.txt 파일같은것에는 공통객체만을 저장해놓고 개별적인 부분은 각자 @Component를 붙여서 객체 저장소에 등록되게 할수 있다.
-            guava 라이브러리 이용
+            guava 라이브러리 이용 - java reflection을 좀더 쉽게 이용할 수 있게 도와주는 라이브러리
 
+        예시)
+        ClassLoader classloader = AppContext.class.getClassLoader();
+        ClassPath classPath = ClassPath.from(classloader);
+        // 1. 패키지 내의 모든 클래스를 읽어서 Set에 저장
+        Set<ClassPath.ClassInfo> set = classPath.getTopLevelClasses("com.fastcampus.ch3");
+        //Set에 저장된 클래스들을 읽어서 객체 생성해서 map에 저장
+        for(ClassPath.ClassInfo classInfo : set) { // 2. 패키지 내의 @Component가 붙은 클래스 찾기
+            Class clazz = classInfo.load();
+            Component component = (Component)clazz.getAnnotation(Component.class);
+            if(component != null) {
+                String id = StringUtils.uncapitalize(clazz.getSimpleName()); // Car -> car ; 패키지이름을 뺀것!, uncaptitalize는 소문자로 바꾸는 기능
+                map.put(id, clazz.newInstance()); // 3. 객체 생성해서 map에 저장
+            }
+        }
+
+        애너테이션을 이용해서 객체 저장소 즉 애플리케이션 컨텍스트에 저장할 빌드를 지정해 주는것을
+        컴포넌트 스캐닝이라고 한다.
 

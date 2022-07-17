@@ -2,6 +2,11 @@ Spring DI 흉내내기(1)
     1.변경에 유리한 코드(1) - 다형성, factory method
 
     예시)
+    (전제)
+    class Car {}
+    class Truck {} extends Car {}
+    class SportsCar {} extends Car {}
+
     SportsCar car = new SportsCar(); 를 아래 코드로 변경을할때 수정해야하는 포인트는 2군데 SportsCar -> Truck
     Truck car = new Truck();
 
@@ -10,17 +15,34 @@ Spring DI 흉내내기(1)
 
     다형성을 이용하여 변경포인트를 2개에서 1개로 줄일 수 있다.
 
-    더 변경포인트를 줄이기 위해서는 별도의 메서드를 만드는것!
+    더 변경포인트를 줄이기 위해서는 별도의 메서드를 통해서 객체를 생성해주어야 한다!
 
-    Car car = getCar(); 8~9코드와 이코드들이 동일!
-    static Car getCar() {
+    Car car = getCar(); 8~9코드와 이코드들이 동일! 기능을 사용하는 코드(n개)
+    static Car getCar() { 기능을 제공하는코드(1개)
         return new SportsCar();
     }
+    기능을 제공하는 곳만 변경하면 사용하는곳을 변경할 필요가 없으므로 수정해야하는 범위를 줄일 수 있다.
 
     2.변경에 유리한 코드(2) - Map과 외부 파일
+    예시)
+    static Car getCar() throw Exception {
+        //config.txt를 읽어서 Properties에 저장
+        Properties p = new Properties();
+        p.load(new FileReader("config.txt"));
+
+        //클래스 객체(설계도)를 얻어서
+        Class clazz = Class.forName(p.getProperty("car"));
+        return (Car) clazz.newInstance(); //객체를 생성해서 반환
+    }
+        파일(config.txt)을 읽어와서 그 객체를 생성해서 반환하는것이다.
+        properties는 맵과 똑같지만 (String, String)으로 저장하는점이 다르다. 즉, 타입의 차이만 있을 뿐이다.
         굳이 Map 대신 Properties를 쓰는 이유 load()가 파일에서 데이터를 읽고, 저장하는것이 편해서!
-        프로그램을 변경하지 않아도된다! (코드를) txt파일만 수정하면된다.
-        ★프로그램의 변경을 최소화하여야한다!
+
+        (예시)
+        config.txt
+        car=com.fastcampus.ch3.SportsCar - 이 부분에서 SportsCar만 변경해주면 되는것이다.(k,v)
+        프로그램을 변경하지 않아도된다!(코드를 변경x -> 굉장한 장점 -> 코드 변경시 테스트필수) txt파일만 수정하면된다.
+        ★★프로그램의 변경을 최소화하여야한다! (OOP의 목표 - 변경에 유리한 코드 작성)
 
         ★변경에 유리한 코드의 핵심 '분리'에는
             1. 변하는것, 변하지 않는것
@@ -28,3 +50,5 @@ Spring DI 흉내내기(1)
             3. 중복코드 -> AOP
 
         하드코딩 되어있는 부분은 유연하게!
+
+        getCar에서 getObject를 사용하여 더 유연하게 만들었다. car 뿐만 아니라 다른객체또한 읽을 수 있게끔.

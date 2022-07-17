@@ -29,18 +29,18 @@ class Appcontext {
             ClassLoader classLoader = Appcontext.class.getClassLoader();
             ClassPath classPath = ClassPath.from(classLoader);
 
-            Set<ClassPath.ClassInfo> set = classPath.getTopLevelClasses("com.fastcampus.ch3.diCopy3");
+            Set<ClassPath.ClassInfo> set = classPath.getTopLevelClasses("com.fastcampus.ch3.diCopy3");//클래스 목록 가져온다.
 
-            for(ClassPath.ClassInfo classinfo :set){
-                Class clazz = classinfo.load();
+            for(ClassPath.ClassInfo classInfo : set){ //for문으로 set에 담긴 클래스들을 하나씩 읽는다. @Component가 붙어있는지 확인한다.
+                Class clazz = classInfo.load();
                 Component component = (Component) clazz.getAnnotation(Component.class);
                 if (component != null) {
-                    String id = StringUtils.uncapitalize(classinfo.getSimpleName());
+                    String id = StringUtils.uncapitalize(classInfo.getSimpleName()); //getSimpleName - 클래스 이름을 얻어온다. uncapitalize - 소문자로 변환한다.
                     map.put(id, clazz.newInstance());
                 }
             }
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
         }
     }
 

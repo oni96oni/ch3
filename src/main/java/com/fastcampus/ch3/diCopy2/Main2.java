@@ -1,7 +1,6 @@
 package com.fastcampus.ch3.diCopy2;
 
 import java.io.FileReader;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -19,7 +18,7 @@ class Appcontext {
             Properties p = new Properties();
             p.load(new FileReader("config.txt"));
             
-            // Properties에 저장된 내용을 Map 저장하는 과정
+            // Properties에 저장된 내용을 Map으로 저장(옮기는)하는 과정
             map = new HashMap(p);
 
             //반복문으로 클래스 이름을 얻어서 객체를 생성해서 다시 map에 저장
