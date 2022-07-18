@@ -15,7 +15,7 @@ Spring DI 흉내내기(3)
 
         Object getBean(Class clazz) { // 타입으로 찾기
             for(Object obj : map.values()) {
-                if(clazz.isInstance(o)) { // 타입이 같은지 확인 obj instanceof clazz
+                if(clazz.isInstance(obj)) { // 타입이 같은지 확인 obj instanceof clazz
                     return obj;
                 }
             }
@@ -33,7 +33,7 @@ Spring DI 흉내내기(3)
         Door door = (Door)ac.getBean("door");
 
         car.engine = engine; // 수동으로 객체 참조 연결, 이 연결을 자동으로 하게 해주는 방법이 @Autowired 애노테이션과 @Resource 애너테이션이다.
-        car.dor = door; // map에 저장되있는 객체들(value) 중에 찾아서 자동으로 연결해준다.
+        car.door = door; // map에 저장되있는 객체들(value) 중에 찾아서 자동으로 연결해준다.
 
         class Car {
             Engine engine;
