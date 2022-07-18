@@ -1,13 +1,14 @@
 Spring DI 활용하기 - 이론(1)
     1. 빈(bean)이란 ?
         JavaBeans - 재사용 가능한 컴포넌트, 상태(iv), getter&setter, no-args constructor
+        화면단쪽은 망해서(awt-swing-fx) 서버쪽 빈을 쓰게 되었다.
 
         Servlet & JSP bean - MVC의 Model, EL, scope, JSP container가 관리, 심플
             Client 복잡해서 망했어, server(Servlet & JSP bean)는 단순해서 살음
             Model-데이터전달할때 사용
 
         EJB(Enterprise Java Beans) - 복잡한 규칙, EJB container가 관리, 복잡
-            관리한다는것 -> 빈을 생성하고 소멸하는등
+            관리한다는것은은 -> 빈을 성하고 소멸하는등
 
         Spring Bean - POJO(Plan Old Java Object) 단순, 독립적, Spring container가 관리, 심플
 
@@ -17,38 +18,61 @@ Spring DI 활용하기 - 이론(1)
         빈은 맵에다가 k,v로 빈의 이름, 객체 주소를 가지고 있음 이렇게 관리를 한다.
 
         Spring container - Bean 저장소, Bean을 저장, 관리(생성,소멸,연결) 연결은 객체간의 관계까지 연결해줌 (ex @Autowired) 연결을 통해서 우리가 작성할 코드가 줄어듬
-            1. BeanFactory - Bean을 생성, 연결 등의 기본 기능을 정의
-            2. ApplicationContext - BeanFactory를 확장해서 여러 기능을 추가 정의
+            1. BeanFactory - Bean을 생성, 연결 등의 기본 기능을 정의해놓은 인터페이스
+            2. ApplicationContext - BeanFactory를 확장해서 여러 기능을 추가 정의해놓은 인터페이스
             Spring container와 ApplicationContext는 거의 같은 말
+
+            특징비교예시)
+            Feature                                                  BeanFactory                 ApplicationContext
+            Bean instantiatior/wiring                                   o                              o
+            Integrated lifecycle management                             x                              o
+            Automatic BeanPostProcessor registation                     x                              o
+            Automatic BeanFactoryPostProcessor registation              x                              o
+            Convenient MessageSource access(for internationalization)   x                              o
+            Built-in ApplicationEvent publication mechanism             x                              o
+
+        ApplicationContext는 스프링으로 개발할때 모듈 전체 환경을 관리하는것! 그중 일부가 Spring container이다.
 
     3. ApplicationContext의 종류
         다양한 종류의 ApplicationContext구현체를 제공
         설정을 xml로하냐 자바코드로 하냐 둘도 나뉘고 또 웹이야 웹이 아니냐로 나뉜다.
         요즘에는 xml사용보다 자바코드를 사용하는 추세
         xml은 <bean> 자바코드는 @Bean
-        자바코드가 더 유리한 이유는 컴파일러가 다 체크를 해주기때문이다. xml은 텍스트 문서
+        자바코드가 더 유리한 이유는 컴파일러가 다 체크를 해주기때문이다. xml은 텍스트 문서, validator가 검사해주긴하지만 컴파일러만은 못하다.
+
+        기억해둘만한 AC의 종류
+        AC의 종류                      XML                                  Java Config
+        non-Web            GenericXmlApplicationContext          AnnotationConfigApplicationContext
+        Web                XmlWebApplicationContext              AnnotationConfigWebApplicationContext
 
     4. Root AC와 Servlet AC
         web.xml파일에 보면 ContextLoaderListener -> 이벤트 처리기가 톰캣이 시작할때 이벤트를 체크해서 xmlWebApplicationContext를 생성을 해준다.
+        기본적으로 2개의 AC를 만든다.
         만들때는 설정파일(root-context.xml)을 사용해서 만든다. DispatcherServlet을 서블릿으로 등록하면서 XmlWebApplicationContext를 또 만든다. (2개만듬)
         이때 만들때 사용하는 설정 파일은 servlet-context.xml파일 사용 그리고 만든 두개를 서로 연결하여 부모자식관계를 만들어준다.
 
-        공통으로 쓰이는 bean을 넣어놓고 자식들에는 개별적으로 사용되는 bean을 넣어놓는다.
+        공통으로 쓰이는 bean을 부모 모듈에 넣어놓고 자식들에는 개별적으로 사용되는 bean을 넣어놓는다.
+        부모쪽에는 웹과 상관없는 non-Web영역의 빈을 넣는다. db같은
+        자식쪽에는 웹에서 사용되는 영역의 빈을 넣는다.
+        서블릿이 생성되면서 ac를 하나 더만드는것
 
         톰캣 엔진 안에 호스트별로 영역이 있고 그 안에 모듈별로 컨텍스트가 있고 그 컨텍스트 안에 서블릿들이 있다
 
-        Jsp의 기본객체인 Application
-            그 안에 attributes(map)이 있고 그안에 k 값에 WebApplicationContext.ROOT가 있고
-            v값에 XmlWebApplicationContext가 있다.
+        Jsp의 기본객체인 Application, servletContext는 JSP의 기본 객체인 application과 동일
+           그 안에 attributes(map)이 있고 그안에 k 값에  WebApplicationContext.ROOT가 있고
+            v값에 ContextLoaderListener가 만들어준 XmlWebApplicationContext가 있다.
 
-            children이라는(map)에는 k 값에 "appServlet"이 있고
-            v값에 DispatcherServlet이 있고 여기 contextClass는 XmlWebApplicationContext가 있는데 여기에 Parent로 RootWebAc를 가르키게 되어 있다.
+            서블릿을 관리하는 children이라는(map)에는 k 값중에 하나가 "appServlet"이고
+            v값에 DispatcherServlet이 있고 디스페쳐서블릿이 생성되면서 contextClass(iv)에는 XmlWebApplicationContext(Servlet Web AC)가 있는데
+            여기에 Parent라는 멤버가 부모인 RootWebAc를 가르키게 되어 있다.
+            그래서 빈을 찾을때 자식ac를 찾고 없으면 부모ac를 찾는다!
 
         ★ AC는 부모 자식간의 관계로 연결되어 있어!!
 
         servletContext Facade 패턴은 복잡한 구조를 쉽게 보여주기 위함.
-            진짜 context는 StandardContext!! 이름이 같아서 context랑 헷갈리기 쉽다. ApplicationContext는 실제 모듈을 둘러 싼 다른 환경들까지 같이 포함
-            컨텍스트 안에는 children들이 있음 ( 이것들이 모두 servlet 을 말함 )
+        context를 cache와 함께 감싸준것뿐이다.
+            진짜 context는 context 안에있는 StandardContext!! 이름이 같아서 context랑 헷갈리기 쉽다. ApplicationContext는 실제 모듈을 둘러 싼 다른 환경들까지 같이 포함
+            컨텍스트 안에는 children들이 있음 ( 이것들이 모두 context안에 servlet 을 말함 )
                 children 안에는 appServlet이 있는데 거기 key 값으로 appServlet이 또 들어가 있는데 이것이 DS 이다.
 
     ★진짜 context는 StandardContext!! 이름이 같아서 context랑 헷갈리기 쉽다. ApplicationContext는 실제 모듈을 둘러 싼 다른 환경들까지 같이 포함

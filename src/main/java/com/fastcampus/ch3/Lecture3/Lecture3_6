@@ -6,12 +6,29 @@ Spring DI 활용하기 - 이론(2)
         getBeanDefinitionCount() : 정의된 빈의 갯수
         getBeanDefinitionNames() : 정의된 빈의 이름
 
-    태그를 옮기면서 어떤 빈들이 추가되고 줄어드는지 알 수 있다.
+   annotation-config와 component-scan은 똑같은 빈등록을 해준다.
+
+   태그를 옮기면서 어떤 빈들이 추가되고 줄어드는지 알 수 있다.
+    2개의 AC에 어떻게 접근할 수 있는가?
+        1. servletAC는 선언하고 @Autowired로 주입
+        2. rootAC는 HomeController에서 접근하는 방법 나와있다.
 
     servletAC가 있으면 getParent메서드로 rootAC를 구할 수 있다.
 
-    system properties 설정값을 줄때 -D를 사용해서 Key값을 주고 Value값을 주면
+    이번강의는 흐름을 말하는것 같기는 한데 무슨말인지 하나도 모르겠다 정리가 안돼
+
+    attributes는 context저장소
+    children 모듈의 servlet이 다 등록되어 있는곳
+    그 안에 instance가 있는데 그안에 ds가 있다. 그리고 contextClass 또한 있다.
+
+    system properties 설정값을 줄때 -D를 사용해서 Key값을 주고 Value값을 준다. jvm설정값을 설정할때 쓴다.
 
     한글깨질때 구성편집 - vm편집 -Duser.language=en 입력
 
+    artifact는 우리가 개발한 제품을 의미합니다. 여기서는 ch3
+    rootAC 초기화는 root-context.xml을 이용해서 초기화 합니다.
+    ServletAC 초기화는 servlet-context.xml을 이용해서 초기화 합니다.
+
     Root 웹 초기화 - ?_? 무슨흐름이야 대체
+
+

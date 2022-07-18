@@ -15,13 +15,13 @@ import java.util.Locale;
 //@Controller
 public class HomeController {
 	@Autowired
-	WebApplicationContext servletAC; // Servlet AC
+	WebApplicationContext servletAC; // Servlet AC는 주입 받을 수 있다.
 
 	@RequestMapping(value = "/", method = RequestMethod.GET)
 	public String home(Locale locale, HttpServletRequest request, Model model) {
 		// 원래는 request.getServletContext()지만, 컨트롤러는 HttpServlet을 상속받지 않아서 아래와 같이 해야함.
 		ServletContext sc = request.getSession().getServletContext(); // ApplicationContextFacade
-		WebApplicationContext rootAC = WebApplicationContextUtils.getWebApplicationContext(sc); // Root AC
+		WebApplicationContext rootAC = WebApplicationContextUtils.getWebApplicationContext(sc); // Root AC를 가져오는 방법
 
 		System.out.println("webApplicationContext = " + rootAC);
 		System.out.println("servletAC = " + servletAC);
