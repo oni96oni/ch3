@@ -1,0 +1,19 @@
+MySQL설치
+    커뮤니티버전
+    installer 사용하는게 편리
+    설치타입은 developer dafault
+    requirements 설치
+    설치파일 다운로드
+    설치파일 실행
+        Server - 서버
+        Workbench - 서버에 명령내일때
+        Shell - dos창
+        Router - 데이터 다중화때 사용
+        Connector - 프로그램에서 데이터 연결할때 사용
+    8.0.27
+
+    Root Account - 최고 권한 가진 계정
+
+    서비스탭에서 MySQL 가동중인지 확인가능
+
+
