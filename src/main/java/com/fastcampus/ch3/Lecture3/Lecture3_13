@@ -1,10 +1,14 @@
 Spring으로 DB연결하기
     자바 프로그램을 이용해 MySQL 데이터를 읽고 수정하기
 
-    연결된 데이터베이스에다가 sql 명령을 내리려면 Statement가 필요하다. 그리고 executeQuery, 실행한 결과를 rs에 담는다.
-    rs.next()는 읽을행이 있으면 true; 없으면 while;
+    maven reposiroty에서 mysql jdbc가 필요하다!
+    DriverManager에 연결정보를 넣어서 db와 연결한다.
+    ResultSet은 표형식의 2차원 테이블 구조를 갖고있다.
 
-    JDBC API를 이용해 데이터베이스 연결! 이걸 spring jdbc를 사용해보자.
+    연결된 데이터베이스에다가 sql 명령을 내리려면 Statement가 필요하다. 그리고 executeQuery, 실행한 결과를 rs에 담는다.
+    rs.next()는 읽을행(실행해서 나온 결과)이 있으면 true; 없으면 while;
+
+    JDBC API(DBConnectionTest.java)를 이용해 데이터베이스 연결! 이걸 spring jdbc(DBConnectionTest2.java)를 사용해보자. - spring jdbc 다운로드 필요
 
             스키마의 이름(springbasic)이 다른 경우 알맞게 변경
             String DB_URL = "jdbc:mysql://localhost:3306/springbasic?useUnicode=true&characterEncoding=utf8";
@@ -20,8 +24,30 @@ Spring으로 DB연결하기
             ds.setUsername(DB_USER);
             ds.setPassword(DB_PASSWORD);
 
+    main메서드에다가 놓으면 우리가 직접 눈으로 봐야하는데
     Junit testFramework -> 테스트를 자동화할 수 있다.
         -> TDD라고도함 (Test Driven Developer)
+        테스트 코드가 아무리 많아도 일괄적으로 실행해서 어떤부분이 실패했는지 확인가능하다.
 
     테스트문
+    assert문은 반드시 들어가야한다.
     assertTrue(conn!=null); // 괄호 안의 조건식이 true면, 테스트 성공! 아니면 실패
+
+    수동작성 대신 스프링에서 배운 자동주입을 사용
+    ApplicationContext ac = new GenericXmlApplicationContext("file:src/main/webapp/WEB-INF/spring/**/root-context.xml");
+            DataSource ds = ac.getBean(DataSource.class);
+    를
+    @Autowired
+    DataSource ds;
+    로 사용한다.
+
+    대신 class에 @RunWith(SpringJUnit4ClassRunner.class)와 (runner를 사용해서 테스트 진행, ac(ApplicationContext)를 자동으로 만들어준다)
+        @ContextConfiguration(locations = {"file:src/main/webapp/WEB-INF/spring/**/root-context.xml"})를 작성해주어야한다. (설정파일 위치지정)
+        이렇게 하면 한곳에만 위치를 지정해두어도 돼서 성능적으로도 유리하다.
+
+    ApplicationContext도 주입받아서 사용이 가능하다
+
+    @Autowired
+    ApplicationContext ac;
+
+
