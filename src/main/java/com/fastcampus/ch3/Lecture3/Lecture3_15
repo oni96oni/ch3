@@ -1,28 +1,46 @@
-DAO의 작성과 적용
+DAO의 작성과 적용(1)
     1.DAO(Data Access Object)란?
         데이터에 접근하기 위한 객체로써, Database에 저장된 데이터를 읽기, 쓰기, 삭제, 변경을 수행 (CRUD)
         DB테이블당 하나의 DAO를 작성
-        컨트롤러에더 다오를 이용해 데이터베이스를 다루게 된다.
+        컨트롤러에서 다오를 이용해 데이터베이스를 다루게 된다.
+        컨트롤러에서 db를 바로 접근할 수도 있지만 mvc model을 따른다!
+            (컨트롤러에다 db에 바로 접근하게되면 중복이 발생할 수 밖에 없어서! ex:LoginController, RegisterController 둘다 selectUser()를 사용하게 된다.)
+
 
     2. 계층(layer)의 분리
-        컨트롤러에서 직접 DB에 접근 할 수도 있다.
+        컨트롤러에서 직접 DB에 접근 할 수도 있지만,
         직접 접근하는 것보다 컨트롤러와 DB사이에 DAO를 넣으면 중복코드를 제거 가능하여 계층을 분리하는것이다. 또한 변경에 유리!
         DAO를 보통 영속계층이라하고 (Persistence Layer, Data Access Layer)
         컨트롤러는 Prosentation Layer (Data를 보여주는 계층) 이라고 한다.
-        그리고 보통은 Business Layer라고 하나의 층이 더 있다. 보통 3개의 계층이 있다.
+        그리고 보통은 Business Layer라고 하나의 층이 더 있다.
+        이렇게 계층을 3개로 나누는것이 보통이다.
+
+        실무에서는 메서드 예외 선언하는것보다 처리하는것이 올바르다.
 
         이번강의 목표 Controller, DAO 작성
         DB 읽어와서 로그인, 회원가입한게 DAO를 통해 DB에 저장되는지 보자!
 
-        close는 항상 해줘야해 아니면 메모리가 부족한 상황이 올 수도 있음.
+        작업 실패시 0을 반환해도 되지만 FAIL을 쓴이유는 의미를 분명하게 하기위함이다.
+
+        다 쓰고 난 다음에는 예외가 발생 하든 안하든 close는 항상 해줘야해 아니면 메모리가 부족한 상황이 올 수도 있음.
         close도 순서가있다! 만들어진 순서의 역순으로 닫아주어야한다. 데칼코마니!
+        만들어 질때는 conn(Connection) - pstmt(prepared Statement) - RS(ResultSet) 닫아줄 때는 RS(ResultSet) - pstmt(prepared Statement) - conn(Connection) 순으로 닫아줘야한다.
 
+        그런데 이제 위에 방법을 사용할 필요가 없다. 대신에 try-with-resources 사용.
         try-with-resources는 finally구문이 없다.
-            try-caych블럭에서 사용할 객체들을 미리 만들고 사용하다가 예외가 발생하건 안하건 자동으로 종료된다! close를 안해줘도 되서 깔끔
+            try블럭 이전 괄호에다가 사용할 객체들을 미리 만들고 사용하다가 예외가 발생하건 안하건 자동으로 종료된다! close를 안해줘도 되서 깔끔
+        자원을 반환하는 가장 좋은 방법!
+        대신 ()안에 올수 있는 객체는 autocloseable 객체를 구현한 객체들만 들어올 수 있다.
 
-        인터페이스에 있는 모든 메서드들은 public
+        인터페이스에 있는 모든 메서드들은 public abstract니까 생략.
 
-        @Component는 여러가지 애너테이션에 붙어있다.
+        다른db를 사용하게되면 userdao를 바꿔야하는데 dao를 바꾸기보다는 인터페이스를 설정해놓고 실제 구현체만 바꾸면 되게하는것이 변경에 유리하다.
 
+        @Autowired
+        private UserDao userDao; 이런식으로 사용!
 
+        @Component를 붙여야 userdao를 구현한 클래스가 bean으로 등록된다.
+        그런데 @Component보다 @Repository를 사용한다.
+        @Component는 여러가지 애너테이션들에 붙어(포함)있다. (@Controller, @Repository, @Service, @ControllerAdvice)
 
+        ★스캔(@Aurowired 주입)이 되려면 root-context에 component-scan이 있어야한다!!

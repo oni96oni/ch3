@@ -22,6 +22,7 @@ public class DBConnectionTest2Test {
     DataSource ds;
     final int FAIL = 0;
 
+    //사용자 정보를 user_info에 저장하는 메서드
     @Test
     public void insertUserTest() throws  Exception {
         User user = new User("asdf2", "1234", "abc", "aaaa@aaa.com", new Date(), "fb", new Date());
@@ -73,17 +74,17 @@ public class DBConnectionTest2Test {
         // try-with-resources
         try(
                 Connection conn = ds.getConnection();
-                PreparedStatement pstnt = conn.prepareStatement(sql); // SQL Injection공격, 성능향상!
+                PreparedStatement pstmt = conn.prepareStatement(sql); // SQL Injection공격, 성능향상!
                 ){
-            pstnt.setString(1, user.getPwd());
-            pstnt.setString(2, user.getName());
-            pstnt.setString(3, user.getEmail());
-            pstnt.setDate(4, new java.sql.Date(user.getBirth().getTime()));
-            pstnt.setString(5, user.getSns());
-            pstnt.setTimestamp(6, new java.sql.Timestamp(user.getReg_date().getTime()));
-            pstnt.setString(7, user.getId());
+            pstmt.setString(1, user.getPwd());
+            pstmt.setString(2, user.getName());
+            pstmt.setString(3, user.getEmail());
+            pstmt.setDate(4, new java.sql.Date(user.getBirth().getTime()));
+            pstmt.setString(5, user.getSns());
+            pstmt.setTimestamp(6, new java.sql.Timestamp(user.getReg_date().getTime()));
+            pstmt.setString(7, user.getId());
 
-            rowCnt = pstnt.executeUpdate();
+            rowCnt = pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
             return FAIL;
@@ -176,17 +177,17 @@ public class DBConnectionTest2Test {
 //        insert into user_info (id, pwd, name, email, birth, sns, reg_date)
 //        values ('asdf22', '1234', 'smith', 'aaa@aaa.com', '2022-01-01', 'facebook', now());
 
-        String sql = "insert into user_info values (?, ?, ?, ?,?,?, now()) ";
+        String sql = "insert into user_info values (?, ?, ?, ?, ?, ?, now()) ";
 
-        PreparedStatement pstmt = conn.prepareStatement(sql); // SQL Injection공격, 성능향상
+        PreparedStatement pstmt = conn.prepareStatement(sql); // 장점 : SQL Injection공격, 성능향상
         pstmt.setString(1, user.getId());
         pstmt.setString(2, user.getPwd());
         pstmt.setString(3, user.getName());
         pstmt.setString(4, user.getEmail());
-        pstmt.setDate(5, new java.sql.Date(user.getBirth().getTime()));
+        pstmt.setDate(5, new java.sql.Date(user.getBirth().getTime())); //setDate가 sql.Date타입이라서 바꿔주어야한다.
         pstmt.setString(6, user.getSns());
 
-        int rowCnt = pstmt.executeUpdate(); //  insert, delete, update
+        int rowCnt = pstmt.executeUpdate(); //  insert, delete, update , 결과 int는 sql실행 결과 몇개의 행이 영향을 받았냐를 의미.
 
         return rowCnt;
     }

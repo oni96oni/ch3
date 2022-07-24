@@ -1,5 +1,9 @@
-DAO의 작성과 적용
+DAO의 작성과 적용(2)
+    userdao를 주입받아서 crud기능을 사용할 수 있다.
 
+    한글깨짐문제 -> 인코딩필터적용, web.xml에다가 등록
 
+    로그인할때 id길이 짧거나, 비밀번호 필수 메세지 안나오는것 해결 -> 메세지소스 빈등록, servlet-context.xml에다가 등록
 
+    File Encodings에서 Transparent native-to-ascii conversion 체크, 체크하면 아스키로 변환해서 전송
 

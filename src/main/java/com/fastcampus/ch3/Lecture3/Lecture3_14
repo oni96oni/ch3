@@ -1,1 +1,13 @@
 Spring으로 DB 다루기 - TDD
+    일반 statement를 사용하여 쿼리를 작성하는 것은 좋지 않다.
+    preparedStatement를 사용해서 sql injection 공격방어와 성능향상의 장점을 얻을 수 있다.
+        values에 " " 사용해가면서 sql문을 작성안해도 편하다, sql문이 심플해진다.
+        sql문을 재사용할 수 있기 때문에 성능향상, ?안에 값이 달라도 전부 같은 sql문장으로 인식하기 때문에 캐싱효과가 있어서 성능향상
+        일반 statement를 쓰면 sql 중간에 다른 sql문을 복잡하게 넣어서 마음대로 바꾸는 해커들의 공격이 올 수 있다.
+
+    executeUpdate()는 insertm delete, update할때 사용한다
+    executeQuery()는 select할때 사용한다
+
+    JUnit에서 각 테스트는 메서드 하나하나를 별도의 객체에서 실행한다.
+    인스턴스 변수이긴 해도 같은 클래스에 있는 테스트 메서드들이 데이터소스(DataSource ds;)를 공유하지 않는다.
+
