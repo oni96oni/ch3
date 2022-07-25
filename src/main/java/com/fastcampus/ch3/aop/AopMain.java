@@ -10,7 +10,7 @@ public class AopMain {
     public static void main(String[] args) throws Exception{
         MyAdvice myAdvice = new MyAdvice();
 
-        Class myClass = Class.forName("com.fastcampus.ch3.aop.MyClass");
+        Class myClass = Class.forName("com.fastcampus.ch3.aop.MyClass"); //동적 생성
         Object obj = myClass.newInstance();
 
         for(Method m : myClass.getDeclaredMethods()) {
