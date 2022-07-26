@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.DefaultTransactionDefinition;
 
@@ -29,7 +28,7 @@ public class TxService {
         try {
             a1Dao.insert(1, 100); // 성공
             insertB1WithTx();
-            a1Dao.insert(2, 100); // 실패
+            a1Dao.insert(2, 200); // 성공
             tm.commit(status);
         } catch (Exception e) {
             e.printStackTrace();
@@ -38,7 +37,7 @@ public class TxService {
         }
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
+//    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = Exception.class)
     public void insertB1WithTx() throws Exception {
         PlatformTransactionManager tm = new DataSourceTransactionManager(ds);
         DefaultTransactionDefinition txd = new DefaultTransactionDefinition();
@@ -47,7 +46,7 @@ public class TxService {
 
         try {
             b1Dao.insert(1, 100); // 성공
-            b1Dao.insert(1, 200); // 성공
+            b1Dao.insert(1, 200); // 실패
             tm.commit(status);
         } catch (Exception e) {
             e.printStackTrace();

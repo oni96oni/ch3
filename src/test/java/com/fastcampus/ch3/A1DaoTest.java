@@ -20,6 +20,7 @@ public class A1DaoTest {
     @Autowired
     DataSource ds;
 
+    //root-context에다가 bean등록을 해준뒤에는 이렇게 할 수 있다.
     @Autowired
     DataSourceTransactionManager tm;
     @Test

@@ -23,7 +23,7 @@ public class A1Dao {
         try {
 //            conn = ds.getConnection();
             conn = DataSourceUtils.getConnection(ds);
-            System.out.println("conn = " + conn);
+            System.out.println("conn = " + conn); //txmanager를 안쓰면 다른 커넥션객체를 쓰게된다.
             pstmt = conn.prepareStatement("insert into a1 values(?,?)");
             pstmt.setInt(1,key);
             pstmt.setInt(2,value);
@@ -31,7 +31,7 @@ public class A1Dao {
             return pstmt.executeUpdate();
         } catch (SQLException e) {
             e.printStackTrace();
-            throw e;
+            throw e; //에러 발생시 다시 던져주어야 commit이 아니라 rollback한다!
         } finally {
 //            close(conn, pstmt);
             close(pstmt);
